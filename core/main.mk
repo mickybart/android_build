@@ -530,12 +530,15 @@ subdir_makefiles := \
 ./frameworks/native/cmds/servicemanager/Android.mk \
 ./frameworks/opt/emoji/Android.mk \
 ./frameworks/av/camera/Android.mk \
+./frameworks/av/media/libnbaio/Android.mk \
+./frameworks/av/media/common_time/Android.mk \
 ./frameworks/av/media/libmedia/Android.mk \
 ./frameworks/av/media/libstagefright/Android.mk \
 ./frameworks/av/drm/libdrmframework/Android.mk \
 ./frameworks/av/drm/common/Android.mk \
 ./frameworks/av/services/camera/libcameraservice/Android.mk \
 ./frameworks/av/media/libmediaplayerservice/Android.mk \
+./frameworks/av/services/audioflinger/Android.mk \
 ./prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.8/Android.mk \
 ./prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.7/Android.mk \
 ./prebuilts/ndk/Android.mk \

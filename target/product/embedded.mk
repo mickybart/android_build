@@ -70,6 +70,12 @@ PRODUCT_PACKAGES += \
     toolbox \
     libsigchain
 
+ifeq ($(GNULINUX_SUPPORT),true)
+PRODUCT_PACKAGES += \
+    libsf_compat_layer \
+    libui_compat_layer
+endif
+
 # SELinux packages
 PRODUCT_PACKAGES += \
     sepolicy \

@@ -64,6 +64,13 @@ endif # CALLED_FROM_SETUP
 
 ifneq ($(PRINT_BUILD_CONFIG),)
 HOST_OS_EXTRA:=$(shell python -c "import platform; print(platform.platform())")
+ifeq ($(GNULINUX_SUPPORT),true)
+$(info ============================================)
+$(info |                GNU/Linux                 |)
+$(info ============================================)
+$(info   GNULINUX_OTA_OS=$(GNULINUX_OTA_OS))
+$(info   GNULINUX_OTA_ARCH=$(GNULINUX_OTA_ARCH))
+endif
 $(info ============================================)
 $(info   PLATFORM_VERSION_CODENAME=$(PLATFORM_VERSION_CODENAME))
 $(info   PLATFORM_VERSION=$(PLATFORM_VERSION))

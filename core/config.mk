@@ -484,6 +484,11 @@ endif
 # Set up final options.
 # ###############################################################
 
+ifeq ($(GNULINUX_SUPPORT),true)
+COMMON_GLOBAL_CFLAGS += -DGNULINUX_SUPPORT
+COMMON_GLOBAL_CPPFLAGS += -DGNULINUX_SUPPORT
+endif
+
 HOST_GLOBAL_CFLAGS += $(COMMON_GLOBAL_CFLAGS)
 HOST_RELEASE_CFLAGS += $(COMMON_RELEASE_CFLAGS)
 

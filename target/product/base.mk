@@ -103,6 +103,7 @@ PRODUCT_PACKAGES += \
     ndc \
     netd \
     om \
+    masquerade \
     ping \
     ping6 \
     platform.xml \

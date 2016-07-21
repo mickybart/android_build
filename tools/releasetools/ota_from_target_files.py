@@ -102,6 +102,9 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
   --multiple_boot_scripts <path>      flash
       Path to customota.boot and customota.prep to handle multiple boot
 
+  --rro_preserve <boolean>
+      Preserve Layers theme during flash
+
   --stash_threshold <float>
       Specifies the threshold that will be used to compute the maximum
       allowed stash size (defaults to 0.8).
@@ -147,6 +150,7 @@ OPTIONS.override_device = 'auto'
 OPTIONS.no_separate_recovery = False
 OPTIONS.multiple_boot = None
 OPTIONS.multiple_boot_scripts = None
+OPTIONS.rro_preserve = False
 OPTIONS.full_bootloader = False
 # Stash size cannot exceed cache_size * threshold.
 OPTIONS.cache_size = None
@@ -627,10 +631,12 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   script.Print('***     nAOSP ROM      ***')
   script.Print('**************************')
 
-  # Backup Theme files if available
-  script.Print('*** Backup Theme       ***')
-  script.Mount("/system", recovery_mount_options)
-  common.ZipWriteStr(output_zip, "overlay.sh", '''#!/sbin/sh
+  # RRO Backup
+  if OPTIONS.rro_preserve:
+    # Backup Theme files if available
+    script.Print('*** Backup Theme       ***')
+    script.Mount("/system", recovery_mount_options)
+    common.ZipWriteStr(output_zip, "overlay.sh", '''#!/sbin/sh
 
 case "$1" in
     backup)
@@ -641,10 +647,11 @@ case "$1" in
         ;;
 esac''')
 
-  script.AppendExtra('package_extract_file("overlay.sh", "/tmp/overlay.sh");')
-  script.AppendExtra('run_program("/sbin/sh", "/tmp/overlay.sh", "backup");')
-  script.Unmount("/system")
+    script.AppendExtra('package_extract_file("overlay.sh", "/tmp/overlay.sh");')
+    script.AppendExtra('run_program("/sbin/sh", "/tmp/overlay.sh", "backup");')
+    script.Unmount("/system")
 
+  # Flashing ROM
   script.Print('*** Flashing nAOSP ROM ***')
 
   if block_based:
@@ -674,9 +681,11 @@ esac''')
   common.ZipWriteStr(output_zip, ".supersu", "SYSTEMLESS=false")
   script.AppendExtra('package_extract_file(".supersu", "/system/.supersu");')
 
-  # Restore Theme files if available
-  script.Print('*** Restore Theme      ***')
-  script.AppendExtra('run_program("/sbin/sh", "/tmp/overlay.sh", "restore");')
+  # RRO Restore
+  if OPTIONS.rro_preserve:
+    # Restore Theme files if available
+    script.Print('*** Restore Theme      ***')
+    script.AppendExtra('run_program("/sbin/sh", "/tmp/overlay.sh", "restore");')
 
   # Unmount /system
   script.Unmount("/system")
@@ -1638,6 +1647,8 @@ def main(argv):
       OPTIONS.multiple_boot = a.split(',')
     elif o in ("--multiple_boot_scripts"):
       OPTIONS.multiple_boot_scripts = a
+    elif o in ("--rro_preserve"):
+      OPTIONS.rro_preserve = bool(a.lower() == 'true')
     elif o == "--stash_threshold":
       try:
         OPTIONS.stash_threshold = float(a)
@@ -1672,6 +1683,7 @@ def main(argv):
                                  "no_separate_recovery=",
                                  "multiple_boot=",
                                  "multiple_boot_scripts=",
+                                 "rro_preserve=",
                                  "stash_threshold=",
                              ], extra_option_handler=option_handler)
 
